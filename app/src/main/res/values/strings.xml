@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Movie App Stage 1</string>
+
+    <!--Preference Menu Options-->
+    <string name="most_popular">Most Popular</string>
+    <string name="highest_rated">Highest Ratings</string>
+
+    <!--App screen names-->
+    <string name="manifest_label_movie_details">Movie Details</string>
+    <string name="manifest_label_your_movies">Your Movies</string>
+    <string name="display_movie_error_message">An error has occurred, please try again by clicking on another movie</string>
+</resources>
