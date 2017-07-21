@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final String MOVIE_DB_URL =
             "http://api.themoviedb.org/3/movie/popular?api_key="; //Put in your api key here.
-    static String[] strings;
     /*
      * Global static variables for the user to sort the data to their preferences.
      */
@@ -48,10 +47,6 @@ public class MainActivity extends AppCompatActivity {
      * ProgressBar to display to the user while their query is loading.
      */
     private ProgressBar mLoadingIndicator;
-    /*
-     * Adapter linking the movie data with the correct views that will display the data.
-     */
-    private GridAdapter mMovieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

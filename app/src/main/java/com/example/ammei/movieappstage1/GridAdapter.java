@@ -1,6 +1,7 @@
 package com.example.ammei.movieappstage1;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,12 +16,18 @@ import com.squareup.picasso.Picasso;
 
 public class GridAdapter extends BaseAdapter {
 
-    private Integer[] mThumbIds;
-
+    public Integer[] mThumbIds = {
+            R.drawable.reel,
+            R.drawable.book,
+            R.drawable.dread_icon,
+            R.drawable.notebook
+    };
+    LayoutInflater inflater;
     private Context mContext;
 
     public GridAdapter(Context context) {
         mContext = context;
+        inflater = (LayoutInflater.from(mContext));
 
     }
 
