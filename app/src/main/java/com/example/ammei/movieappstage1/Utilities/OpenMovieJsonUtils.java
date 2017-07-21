@@ -3,14 +3,11 @@ package com.example.ammei.movieappstage1.Utilities;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.ammei.movieappstage1.GridItem;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
 
 /**
  * Created by ammei on 7/11/2017.
@@ -20,14 +17,14 @@ public class OpenMovieJsonUtils {
 
     private static final String LOG_TAG = OpenMovieJsonUtils.class.getSimpleName();
 
-    public static ArrayList<GridItem> getSimpleMovieDataStringsFromJson
+    public static String[] getSimpleMovieDataStringsFromJson
             (Context context, String movieJsonString) throws JSONException {
 
 
         final String MOVIE_MESSAGE_CODE = "cod";
 
         /* ArrayList to hold each movies data */
-        ArrayList<GridItem> gridItems = new ArrayList<>();
+        String[] parsedMovieData = null;
 
         try {
 
@@ -47,9 +44,9 @@ public class OpenMovieJsonUtils {
                 }
             }
 
-            JSONObject results = baseJsonResponse.getJSONObject("page");
+            JSONArray movieArray = baseJsonResponse.getJSONArray("results");
 
-            JSONArray movieArray = results.getJSONArray("results");
+            parsedMovieData = new String[movieArray.length()];
 
             for (int i = 0; i < movieArray.length(); i++) {
             /* Get the JSONObject representing the current movie */
@@ -60,16 +57,17 @@ public class OpenMovieJsonUtils {
                 String movieReleaseDate = currentMovie.getString("release_date");
                 String moviePoster = currentMovie.getString("poster_path");
                 String movieSummary = currentMovie.getString("overview");
-                String movieRating = currentMovie.getString("vote_average");
+                Double movieRating = currentMovie.getDouble("vote_average");
 
-                GridItem movieResults = new GridItem(movieTitle, movieReleaseDate, moviePoster, movieSummary, movieRating);
-                gridItems.add(movieResults);
+                parsedMovieData[i] = movieTitle + " - " + movieReleaseDate + " - "
+                        + " - " + moviePoster + " - " + movieSummary + " - " + movieRating;
+
             }
 
         } catch (JSONException jsone) {
             Log.e("OpenMovieJsonUtils", "Problem parsing the Movie JSON results", jsone);
         }
 
-        return gridItems;
+        return parsedMovieData;
     }
 }

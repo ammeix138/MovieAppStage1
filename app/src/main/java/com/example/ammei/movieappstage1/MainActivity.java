@@ -20,46 +20,38 @@ import com.example.ammei.movieappstage1.Utilities.NetworkUtils;
 import com.example.ammei.movieappstage1.Utilities.OpenMovieJsonUtils;
 
 import java.net.URL;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
-
+    private static final int SORT_ORDER_POPULAR = 0;
+    private static final int SORT_ORDER_TOP_RATED = 1;
+    /*
+     *
+     */
+    private static final String MOVIE_DB_URL =
+            "http://api.themoviedb.org/3/movie/popular?api_key="; //Put in your api key here.
+    static String[] strings;
+    /*
+     * Global static variables for the user to sort the data to their preferences.
+     */
+    private static String SORT_ORDER = "sort_order";
     /*
      * GridView object to populate movies to
      */
     private GridView mGridView;
-
     /*
      * TextView object to display error message to the user when there is no data.
      */
     private TextView mErrorMessageTextView;
-
     /*
      * ProgressBar to display to the user while their query is loading.
      */
     private ProgressBar mLoadingIndicator;
-
     /*
      * Adapter linking the movie data with the correct views that will display the data.
      */
     private GridAdapter mMovieAdapter;
-
-    /*
-     * ArrayList to populate data
-     */
-    private ArrayList<GridItem> mGridData;
-
-    /*
-     * Global variables for the user to sort the data to their preferences.
-     */
-    private static String SORT_ORDER = "sort_order";
-    private static final int SORT_ORDER_POPULAR = 0;
-    private static final int SORT_ORDER_TOP_RATED = 1;
-
-    private static final String MOVIE_DB_URL =
-            "http://api.themoviedb.org/3/movie/popular?api_key="; //Put in your api key here.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +67,8 @@ public class MainActivity extends AppCompatActivity {
         /*Hooking up the GridView to it's corresponding ID. */
         mGridView = (GridView) findViewById(R.id.gridView);
 
-        //Initialize with empty data.
-        mGridData = new ArrayList<>();
-        mMovieAdapter = new GridAdapter(this, R.layout.movie_list_item, mGridData);
         /*Initializing the GridAdapter. */
-        mGridView.setAdapter(mMovieAdapter);
+        mGridView.setAdapter(new GridAdapter(this));
 
         /*Creating an OnClickListener to listen for when an item is clicked by the user*/
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -125,50 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class MovieTask extends AsyncTask<String, Void, ArrayList<GridItem>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected ArrayList<GridItem> doInBackground(String... params) {
-            if (params.length == 0) {
-                return null;
-            }
-            String movies = params[0];
-            URL movieRequestUrl = NetworkUtils.buildUrl(movies);
-
-            try {
-                String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
-
-                ArrayList<GridItem> simpleJsonMovieData = OpenMovieJsonUtils.getSimpleMovieDataStringsFromJson
-                        (MainActivity.this, jsonMovieResponse);
-
-                return simpleJsonMovieData;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList movieData) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (movieData != null) {
-                showMovieData();
-
-            } else {
-                showErrorMessage();
-            }
-            super.onPostExecute(movieData);
-        }
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu options in the app bar overflow menu
@@ -186,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Highest Rated" menu option.
             case R.id.action_highest_rating:
-
                 return true;
             // Respond to a click on the "Most Popular" menu option.
             case R.id.action_most_popular:
@@ -195,5 +139,48 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class MovieTask extends AsyncTask<String, Void, String[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String[] doInBackground(String... params) {
+            if (params.length == 0) {
+                return null;
+            }
+            String movies = params[0];
+            URL movieRequestUrl = NetworkUtils.buildUrl(movies);
+
+            try {
+                String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
+
+                String[] simpleJsonMovieData = OpenMovieJsonUtils.getSimpleMovieDataStringsFromJson
+                        (MainActivity.this, jsonMovieResponse);
+
+                return simpleJsonMovieData;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String[] movieData) {
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
+            if (movieData != null) {
+                showMovieData();
+
+            } else {
+                showErrorMessage();
+            }
+            super.onPostExecute(movieData);
+        }
     }
 }
