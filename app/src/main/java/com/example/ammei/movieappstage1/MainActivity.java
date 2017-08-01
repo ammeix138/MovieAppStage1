@@ -20,21 +20,25 @@ import com.example.ammei.movieappstage1.Utilities.NetworkUtils;
 import com.example.ammei.movieappstage1.Utilities.OpenMovieJsonUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final int SORT_ORDER_POPULAR = 0;
-    private static final int SORT_ORDER_TOP_RATED = 1;
-    /*
-     *
-     */
-    private static final String MOVIE_DB_URL =
-            "http://api.themoviedb.org/3/movie/popular?api_key="; //Put in your api key here.
+
+    private static final String MOVIE_DP_TOP_RATED_URL = "http://api.themoviedb.org/3/movie" +
+            "/top_rated?api_key=86a31bd15ea90ea230565c86f34b6a13";
+
+    private static final String MOVIE_POPULAR_DB_URL =
+            "http://api.themoviedb.org/3/movie/popular?api_key=86a31bd15ea90ea230565c86f34b6a13"; //Put in your api key here.
+
+    private static final String BASE_URL = MOVIE_DP_TOP_RATED_URL + MOVIE_POPULAR_DB_URL;
     /*
      * Global static variables for the user to sort the data to their preferences.
      */
     private static String SORT_ORDER = "sort_order";
+
     /*
      * GridView object to populate movies to
      */
@@ -47,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
      * ProgressBar to display to the user while their query is loading.
      */
     private ProgressBar mLoadingIndicator;
+
+    private List<Movie> mMovieList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         mGridView = (GridView) findViewById(R.id.gridView);
 
         /*Initializing the GridAdapter. */
-        mGridView.setAdapter(new GridAdapter(this));
+        mGridView.setAdapter(new GridAdapter(mGridView.getContext(), (ArrayList<Movie>) mMovieList));
 
         /*Creating an OnClickListener to listen for when an item is clicked by the user*/
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 /*Once movie item has been clicked, the detailIntent
                   is executed and the DetailActivity is called */
                 Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
+                detailIntent.putExtra("MOVIE_TRANSFER", String.valueOf(mMovieList.get(position)));
                 startActivity(detailIntent);
 
                 Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
@@ -79,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /*Executing the MovieTask*/
-        new MovieTask().execute(MOVIE_DB_URL);
+        new MovieTask().execute(BASE_URL);
     }
 
     /*
@@ -136,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class MovieTask extends AsyncTask<String, Void, String[]> {
+    public class MovieTask extends AsyncTask<String, Void, ArrayList> {
 
         @Override
         protected void onPreExecute() {
@@ -145,7 +152,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
+
+            ArrayList<Movie> movieArrayList = null;
+
             if (params.length == 0) {
                 return null;
             }
@@ -155,19 +165,21 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
 
-                String[] simpleJsonMovieData = OpenMovieJsonUtils.getSimpleMovieDataStringsFromJson
+                movieArrayList = OpenMovieJsonUtils.getSimpleMovieDataStringsFromJson
                         (MainActivity.this, jsonMovieResponse);
 
-                return simpleJsonMovieData;
+                return movieArrayList;
 
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+
             }
+
+            return null;
         }
 
         @Override
-        protected void onPostExecute(String[] movieData) {
+        protected void onPostExecute(ArrayList movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showMovieData();
@@ -175,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 showErrorMessage();
             }
-            super.onPostExecute(movieData);
+
         }
     }
 }

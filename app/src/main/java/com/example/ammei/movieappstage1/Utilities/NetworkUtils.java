@@ -3,6 +3,8 @@ package com.example.ammei.movieappstage1.Utilities;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.ammei.movieappstage1.Movie;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * Created by ammei on 7/11/2017.
@@ -18,16 +21,14 @@ import java.nio.charset.Charset;
 
 public final class NetworkUtils {
 
-    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
-
-    private static final String MOVIE_DB_URL =
-            "http://api.themoviedb.org/3/movie/popular?api_key="; //Put your api key here
-
-    private static final String format = "json";
-    private static final int numberOfMovies = 20;
-
     final static String QUERY_PARAM = "q";
     final static String PARAM_NUMBER_MOVIES = "cnt";
+    private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
+    private static final String MOVIE_DB_URL =
+            "http://api.themoviedb.org/3/movie/popular?api_key=86a31bd15ea90ea230565c86f34b6a13"; //Put your api key here
+    private static final String format = "json";
+    private static final int numberOfMovies = 20;
+    private List<Movie> mMovieList;
 
     /**
      * Returns a new URL object from the given string URL.
@@ -62,6 +63,7 @@ public final class NetworkUtils {
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         String jsonResponse = "";
 
+        //If response is null than return early
         if (url == null) {
             return jsonResponse;
         }
@@ -69,6 +71,7 @@ public final class NetworkUtils {
         //Actual HTTP Request being made.
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
+
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setReadTimeout(10000/*Time in milliseconds*/);
@@ -89,11 +92,15 @@ public final class NetworkUtils {
             Log.e(LOG_TAG, "Problem retrieving your movie results");
         } finally {
             if (urlConnection != null) {
-                inputStream.close();
+                urlConnection.disconnect();
             }
 
-            return jsonResponse;
+            if (inputStream != null) {
+                inputStream.close();
+            }
         }
+
+        return jsonResponse;
     }
 
     private static String readFromStream(InputStream inputStream) throws IOException {
