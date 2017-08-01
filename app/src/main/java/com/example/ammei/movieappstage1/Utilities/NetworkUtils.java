@@ -25,7 +25,7 @@ public final class NetworkUtils {
     final static String PARAM_NUMBER_MOVIES = "cnt";
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private static final String MOVIE_DB_URL =
-            "http://api.themoviedb.org/3/movie/popular?api_key=86a31bd15ea90ea230565c86f34b6a13"; //Put your api key here
+            "http://api.themoviedb.org/3/movie/popular?api_key="; //Put your api key here
     private static final String format = "json";
     private static final int numberOfMovies = 20;
     private List<Movie> mMovieList;
