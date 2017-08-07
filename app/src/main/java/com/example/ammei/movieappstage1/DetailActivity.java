@@ -40,10 +40,10 @@ public class DetailActivity extends AppCompatActivity {
         if (intentThatStartedThisActivity != null){
             if (intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)){
                 mMovieData = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);
-                movieTitle.setText(mMovieData);
-                movieRating.setText(mMovieData);
-                movieReleaseDate.setText(mMovieData);
-                movieSummary.setText(mMovieData);
+                movieTitle.setText((CharSequence) movieTitle);
+                movieRating.setText((CharSequence) movieRating);
+                movieReleaseDate.setText((CharSequence) movieReleaseDate);
+                movieSummary.setText((CharSequence) movieSummary);
 
             }
         }

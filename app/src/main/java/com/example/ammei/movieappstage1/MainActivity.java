@@ -14,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ammei.movieappstage1.Utilities.NetworkUtils;
 import com.example.ammei.movieappstage1.Utilities.OpenMovieJsonUtils;
@@ -28,10 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
 
     private static final String MOVIE_DP_TOP_RATED_URL = "http://api.themoviedb.org/3/movie" +
-            "/top_rated?api_key=86a31bd15ea90ea230565c86f34b6a13";
+            "/top_rated?api_key=";
 
     private static final String MOVIE_POPULAR_DB_URL =
-            "http://api.themoviedb.org/3/movie/popular?api_key=86a31bd15ea90ea230565c86f34b6a13";  //Put in your api key here.
+            "http://api.themoviedb.org/3/movie/popular?api_key=";  //Put in your api key here.
 
     private static final String BASE_URL = MOVIE_DP_TOP_RATED_URL + MOVIE_POPULAR_DB_URL;
     /*
@@ -77,11 +76,14 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 /*Once movie item has been clicked, the detailIntent
                   is executed and the DetailActivity is called */
-                Intent detailIntent = new Intent(MainActivity.this, DetailActivity.class);
-                detailIntent.putExtra("MOVIE_TRANSFER", String.valueOf(mMovieList.get(position)));
-                startActivity(detailIntent);
-
-                Toast.makeText(MainActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                Movie movieData = mMovieList.get(position);
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("movieTitle", movieData.getMovieTitle());
+                intent.putExtra("posterPath", movieData.getMoviePoster());
+                intent.putExtra("releaseDate", movieData.getMovieRelease());
+                intent.putExtra("userRating", movieData.getMovieRating());
+                intent.putExtra("movieOverview", movieData.getMovieSummary());
+                startActivity(intent);
             }
         });
 
@@ -187,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 //  showErrorMessage();
             }
-
         }
     }
 }

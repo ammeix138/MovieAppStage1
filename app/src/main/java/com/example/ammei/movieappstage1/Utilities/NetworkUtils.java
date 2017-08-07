@@ -3,8 +3,6 @@ package com.example.ammei.movieappstage1.Utilities;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.ammei.movieappstage1.Movie;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.List;
 
 /**
  * Created by ammei on 7/11/2017.
@@ -21,14 +18,9 @@ import java.util.List;
 
 public final class NetworkUtils {
 
-    final static String QUERY_PARAM = "q";
-    final static String PARAM_NUMBER_MOVIES = "cnt";
     private static final String LOG_TAG = NetworkUtils.class.getSimpleName();
     private static final String MOVIE_DB_URL =
-            "http://api.themoviedb.org/3/movie/popular?api_key=86a31bd15ea90ea230565c86f34b6a13"; //Put your api key here
-    private static final String format = "json";
-    private static final int numberOfMovies = 20;
-    private List<Movie> mMovieList;
+            "http://api.themoviedb.org/3/movie/popular?api_key="; //Put your api key here
 
     /**
      * Returns a new URL object from the given string URL.
@@ -38,8 +30,12 @@ public final class NetworkUtils {
      */
     public static URL buildUrl(String movieQuery) {
         Uri builtUri = Uri.parse(MOVIE_DB_URL).buildUpon()
-                .appendQueryParameter(QUERY_PARAM, movieQuery)
-                .appendQueryParameter(PARAM_NUMBER_MOVIES, Integer.toString(numberOfMovies))
+                .scheme("http")
+                .authority("api.themoviedb.org")
+                .appendPath("movie")
+                .appendPath("popular")
+                .appendPath("topRated")
+                .appendQueryParameter("api_key", "") //Api Key here
                 .build();
 
         URL url = null;
