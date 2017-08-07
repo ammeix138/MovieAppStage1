@@ -28,10 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
 
     private static final String MOVIE_DP_TOP_RATED_URL = "http://api.themoviedb.org/3/movie" +
-            "/top_rated?api_key=";
+            "/top_rated?api_key=86a31bd15ea90ea230565c86f34b6a13";
 
     private static final String MOVIE_POPULAR_DB_URL =
-            "http://api.themoviedb.org/3/movie/popular?api_key=";  //Put in your api key here.
+            "http://api.themoviedb.org/3/movie/popular?api_key=86a31bd15ea90ea230565c86f34b6a13";  //Put in your api key here.
 
     private static final String BASE_URL = MOVIE_DP_TOP_RATED_URL + MOVIE_POPULAR_DB_URL;
     /*
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMovieData() {
-        showMovieDataView();
+        //  showMovieDataView();
 
     }
 
